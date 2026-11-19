@@ -1,0 +1,10 @@
+{
+  "appId": "com.mauripros.burgertogo",
+  "name": "Burger To Go",
+  "shortName": "Burger To Go",
+  "url": "https://demo.mauripros.com/order/",
+  "brand": "#3bb54a",
+  "background": "#000000",
+  "statusBar": "dark",
+  "version": "1.0.0"
+}

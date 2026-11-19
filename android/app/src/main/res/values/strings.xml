@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- Written by scripts/set-restaurant.js (burgertogo). -->
+<resources>
+    <string name="app_name">Burger To Go</string>
+    <string name="title_activity_main">Burger To Go</string>
+    <string name="package_name">com.mauripros.burgertogo</string>
+    <string name="custom_url_scheme">com.mauripros.burgertogo</string>
+    <string name="channel_orders">Order updates</string>
+    <string name="channel_orders_text">When your order is accepted, ready or on its way</string>
+</resources>

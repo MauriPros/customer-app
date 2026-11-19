@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Small white icon in the phone's status bar for order updates (a shopping bag). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M7,7V6a5,5 0,0 1,10 0v1h2.2a1,1 0,0 1,1 0.92l1,13A1,1 0,0 1,20.2 22H3.8a1,1 0,0 1,-1 -1.08l1,-13A1,1 0,0 1,4.8 7H7zM9,7h6V6a3,3 0,0 0,-6 0v1z"/>
+</vector>

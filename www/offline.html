@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Burger To Go</title>
+<style>
+  :root { --brand:#3bb54a; --bg:#000000; }
+  html, body { margin: 0; height: 100%; }
+  body { display: grid; place-items: center; padding: 24px; box-sizing: border-box; background: var(--bg); color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; text-align: center; }
+  .b { max-width: 340px; }
+  .i { width: 76px; height: 76px; margin: 0 auto 20px; border-radius: 50%; display: grid; place-items: center; background: var(--brand); }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  p { margin: 0 0 24px; opacity: .78; line-height: 1.5; }
+  button { width: 100%; padding: 16px; border: 0; border-radius: 999px; background: var(--brand); color: #fff; font: inherit; font-weight: 700; font-size: 16px; }
+  small { display: block; margin-top: 18px; opacity: .4; font-size: 11px; word-break: break-all; }
+</style>
+</head>
+<body data-url="https://demo.mauripros.com/order/" data-name="Burger To Go">
+<div class="b">
+  <div class="i"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0M12 19.5h.01"/><path d="M3 3l18 18"/></svg></div>
+  <h1 id="t">You are offline</h1>
+  <p id="m">Check your internet connection, then try again.</p>
+  <button type="button" id="go">Try again</button>
+  <small id="why"></small>
+</div>
+<script>
+  (function () {
+    var b = document.body, h = new URLSearchParams(location.hash.slice(1));
+    var back = h.get('url') && /^https:\/\//.test(h.get('url')) ? h.get('url') : b.getAttribute('data-url');
+    if (/^ar/i.test(navigator.language || '')) {
+      document.documentElement.lang = 'ar'; document.documentElement.dir = 'rtl';
+      document.getElementById('t').textContent = 'لا يوجد اتصال بالإنترنت';
+      document.getElementById('m').textContent = 'تأكد من الاتصال بالإنترنت ثم حاول مرة أخرى.';
+      document.getElementById('go').textContent = 'حاول مرة أخرى';
+    }
+    if (h.get('why')) document.getElementById('why').textContent = 'Error: ' + h.get('why');
+    document.getElementById('go').addEventListener('click', function () { location.href = back; });
+    window.addEventListener('online', function () { location.href = back; });
+  })();
+</script>
+</body>
+</html>

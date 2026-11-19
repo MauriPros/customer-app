@@ -1,0 +1,11 @@
+node_modules/
+.DS_Store
+# Copied in by scripts/set-restaurant.js from restaurants/<slug>/
+android/app/google-services.json
+# build output
+android/.gradle/
+android/build/
+android/app/build/
+android/capacitor-cordova-android-plugins/build/
+*.keystore
+*.jks

@@ -1,0 +1,77 @@
+# MauriPros customer apps — cloud builds on Codemagic (https://codemagic.io). Android first.
+# One template for every restaurant: choose the restaurant with RESTAURANT (folder name in restaurants/).
+#
+# Set up once in Codemagic (see SETUP-GUIDE.md):
+#   Code signing (Android) → the same upload keystore as the Owner app, reference name "mauripros_upload"
+#   Environment group "mauripros_customer" (only for android-release):
+#       GCLOUD_SERVICE_ACCOUNT_CREDENTIALS   Google Play service-account JSON (secure)
+#
+# Start a build: Codemagic → this app → Start new build → choose the workflow.
+# To build another restaurant, change RESTAURANT below (or override it when starting the build).
+
+workflows:
+  android-test:
+    name: Android — test APK (install on a phone, no Google Play)
+    max_build_duration: 45
+    instance_type: mac_mini_m2 # Free plan: only Mac M2 machines (500 free min/month)
+    environment:
+      vars:
+        RESTAURANT: burgertogo
+        APP_VERSION: 1.0.0
+      node: 22
+      java: 21
+      android_signing:
+        - mauripros_upload
+    scripts:
+      - name: Install packages
+        script: npm ci
+      - name: Make the app of this restaurant
+        script: node scripts/set-restaurant.js "$RESTAURANT"
+      - name: Copy web files and plugins into the Android project
+        script: npx cap sync android
+      - name: Build the .apk
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease
+      - name: Name the file after the restaurant
+        script: |
+          cd android/app/build/outputs/apk/release
+          for f in *.apk; do mv "$f" "$RESTAURANT-$APP_VERSION-$BUILD_NUMBER.apk"; done
+    artifacts:
+      - android/app/build/outputs/apk/release/*.apk
+
+  android-release:
+    name: Android — build for Google Play (internal testing)
+    max_build_duration: 45
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - mauripros_customer
+      vars:
+        RESTAURANT: burgertogo
+        APP_VERSION: 1.0.0
+      node: 22
+      java: 21
+      android_signing:
+        - mauripros_upload
+    scripts:
+      - name: Install packages
+        script: npm ci
+      - name: Make the app of this restaurant
+        script: node scripts/set-restaurant.js "$RESTAURANT"
+      - name: Copy web files and plugins into the Android project
+        script: npx cap sync android
+      - name: Build (.aab for Google Play + .apk for a test phone)
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew bundleRelease assembleRelease
+    artifacts:
+      - android/app/build/outputs/bundle/release/*.aab
+      - android/app/build/outputs/apk/release/*.apk
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true

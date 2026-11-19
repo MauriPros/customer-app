@@ -1,0 +1,22 @@
+{
+  "name": "mauripros-customer-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MauriPros customer ordering app - one template for every restaurant (Android first). Shows the restaurant's MauriPros website with order updates on the phone.",
+  "scripts": {
+    "restaurant": "node scripts/set-restaurant.js",
+    "sync": "cap sync android"
+  },
+  "dependencies": {
+    "@capacitor-firebase/messaging": "^8.6.0",
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.4",
+    "firebase": "^12.19.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.0"
+  }
+}

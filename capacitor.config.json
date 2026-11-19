@@ -1,0 +1,38 @@
+{
+  "appId": "com.mauripros.burgertogo",
+  "appName": "Burger To Go",
+  "webDir": "www",
+  "server": {
+    "url": "https://demo.mauripros.com/order/",
+    "errorPath": "offline.html",
+    "allowNavigation": [
+      "demo.mauripros.com",
+      "*.stripe.com",
+      "*.stripe.network"
+    ]
+  },
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1200,
+      "launchAutoHide": true,
+      "backgroundColor": "#000000",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "overlaysWebView": false,
+      "style": "DARK",
+      "backgroundColor": "#000000"
+    },
+    "FirebaseMessaging": {
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
+    }
+  },
+  "appendUserAgent": "MauriProsCustomer/1.0"
+}
