@@ -26,15 +26,19 @@
 </div>
 <script>
   (function () {
-    var b = document.body, h = new URLSearchParams(location.hash.slice(1));
-    var back = h.get('url') && /^https:\/\//.test(h.get('url')) ? h.get('url') : b.getAttribute('data-url');
+    var b = document.body;
+    var back = b.getAttribute('data-url');
+    // Called by the app (MainActivity) with the reason and the page that failed.
+    window.mprOffline = function (why, url) {
+      if (url && /^https:\/\//.test(url)) back = url;
+      if (why) document.getElementById('why').textContent = 'Error: ' + why;
+    };
     if (/^ar/i.test(navigator.language || '')) {
       document.documentElement.lang = 'ar'; document.documentElement.dir = 'rtl';
       document.getElementById('t').textContent = 'لا يوجد اتصال بالإنترنت';
       document.getElementById('m').textContent = 'تأكد من الاتصال بالإنترنت ثم حاول مرة أخرى.';
       document.getElementById('go').textContent = 'حاول مرة أخرى';
     }
-    if (h.get('why')) document.getElementById('why').textContent = 'Error: ' + h.get('why');
     document.getElementById('go').addEventListener('click', function () { location.href = back; });
     window.addEventListener('online', function () { location.href = back; });
   })();

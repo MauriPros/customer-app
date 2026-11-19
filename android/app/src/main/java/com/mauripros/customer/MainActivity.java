@@ -16,6 +16,7 @@ import android.webkit.WebView;
 import com.getcapacitor.Bridge;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.BridgeWebViewClient;
+import org.json.JSONObject;
 
 /**
  * MauriPros customer app (one template for every restaurant).
@@ -75,10 +76,25 @@ public class MainActivity extends BridgeActivity {
     static class AppWebViewClient extends BridgeWebViewClient {
 
         private final Bridge appBridge;
+        private String pendingWhy = null;
+        private String pendingUrl = null;
 
         AppWebViewClient(Bridge bridge) {
             super(bridge);
             this.appBridge = bridge;
+        }
+
+        /** The app's own offline page (or anything served by the app itself). */
+        private boolean isAppPage(String url) {
+            String page = appBridge.getErrorUrl();
+            if (url == null) {
+                return false;
+            }
+            if (page != null && url.startsWith(page)) {
+                return true;
+            }
+            Uri u = Uri.parse(url);
+            return "localhost".equalsIgnoreCase(u.getHost());
         }
 
         @Override
@@ -94,14 +110,36 @@ public class MainActivity extends BridgeActivity {
             if (request == null || !request.isForMainFrame()) {
                 return;
             }
+            String url = String.valueOf(request.getUrl());
+            if (isAppPage(url)) {
+                // Never loop: the offline page itself failing does not open it again.
+                Log.w(TAG, "offline page failed: " + url);
+                return;
+            }
             String why = error != null ? ("net " + error.getErrorCode() + " " + error.getDescription()) : "net";
-            showOffline(view, why, String.valueOf(request.getUrl()));
+            showOffline(view, why, url);
         }
 
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             handler.cancel(); // Never continue on a bad certificate.
-            showOffline(view, "ssl " + (error != null ? error.getPrimaryError() : ""), error != null ? error.getUrl() : "");
+            String url = error != null ? error.getUrl() : "";
+            if (isAppPage(url)) {
+                return;
+            }
+            showOffline(view, "ssl " + (error != null ? error.getPrimaryError() : ""), url);
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            // Tell the offline page why and where to go back (it is loaded at its exact address).
+            if (pendingWhy != null && isAppPage(url)) {
+                String js = "window.mprOffline && window.mprOffline(" + JSONObject.quote(pendingWhy) + "," + JSONObject.quote(pendingUrl == null ? "" : pendingUrl) + ");";
+                view.evaluateJavascript(js, null);
+                pendingWhy = null;
+                pendingUrl = null;
+            }
         }
 
         private void showOffline(WebView view, String why, String url) {
@@ -109,7 +147,10 @@ public class MainActivity extends BridgeActivity {
             if (page == null) {
                 return;
             }
-            view.loadUrl(page + "#why=" + Uri.encode(why) + "&url=" + Uri.encode(url));
+            pendingWhy = why;
+            pendingUrl = (url != null && url.startsWith("https://") && !isAppPage(url)) ? url : null;
+            // Exactly the error address: Capacitor serves it from the app only on an exact match.
+            view.loadUrl(page);
         }
     }
 }
