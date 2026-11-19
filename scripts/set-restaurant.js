@@ -49,6 +49,7 @@ fs.writeFileSync(path.join(res, 'values', 'strings.xml'),
     <string name="title_activity_main">${esc(r.name)}</string>
     <string name="package_name">${r.appId}</string>
     <string name="custom_url_scheme">${r.appId}</string>
+    <string name="site_url">${new URL(r.url).origin}/</string>
     <string name="channel_orders">${esc(r.channelName || 'Order updates')}</string>
     <string name="channel_orders_text">${esc(r.channelText || 'When your order is accepted, ready or on its way')}</string>
 </resources>

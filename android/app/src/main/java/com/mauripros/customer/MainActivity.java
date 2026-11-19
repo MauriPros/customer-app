@@ -7,6 +7,7 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.webkit.CookieManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -32,6 +33,20 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Before the first page loads: a "wp_" cookie makes the restaurant's hosting
+        // (WordPress.com page cache) send fresh pages, so the app always runs the
+        // newest website code (order updates etc.), never an old cached copy.
+        try {
+            String site = getString(R.string.site_url);
+            if (site != null && site.startsWith("https://")) {
+                CookieManager cm = CookieManager.getInstance();
+                cm.setAcceptCookie(true);
+                cm.setCookie(site, "wp_mpr_app=1; Path=/; Max-Age=31536000; Secure; SameSite=Lax");
+                cm.flush();
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "cookie: " + e.getMessage());
+        }
         super.onCreate(savedInstanceState);
         createChannels();
         Bridge b = getBridge();
