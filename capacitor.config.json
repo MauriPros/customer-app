@@ -12,7 +12,8 @@
     ]
   },
   "android": {
-    "allowMixedContent": false
+    "allowMixedContent": false,
+    "backgroundColor": "#000000"
   },
   "plugins": {
     "SplashScreen": {
@@ -34,5 +35,6 @@
       ]
     }
   },
-  "appendUserAgent": "MauriProsCustomer/1.0"
+  "appendUserAgent": "MauriProsCustomer/1.0",
+  "backgroundColor": "#000000"
 }
